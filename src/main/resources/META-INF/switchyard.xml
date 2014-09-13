@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<switchyard xmlns="urn:switchyard-config:switchyard:1.0" xmlns:bean="urn:switchyard-component-bean:config:1.0" xmlns:bpm="urn:switchyard-component-bpm:config:1.0" xmlns:sca="http://docs.oasis-open.org/ns/opencsa/sca/200912" xmlns:soap="urn:switchyard-component-soap:config:1.0" xmlns:validate="urn:switchyard-config:validate:1.0" xmlns:xform="urn:switchyard-config:transform:1.0" name="FSWPoc" targetNamespace="urn:fsw-poc-service:1.0">
+  <sca:composite name="FSWPoc" targetNamespace="urn:fsw-poc-service:1.0">
+    <sca:component name="ProcessComponent">
+      <bpm:implementation.bpm persistent="false" processId="BusinessProcessService">
+        <bpm:manifest>
+          <bpm:resources>
+            <bpm:resource location="ProcessComponent.bpmn" type="BPMN2"/>
+          </bpm:resources>
+        </bpm:manifest>
+        <bpm:operations>
+          <bpm:operation type="START_PROCESS"/>
+        </bpm:operations>
+      </bpm:implementation.bpm>
+      <sca:service name="BusinessProcessService">
+        <sca:interface.java interface="it.redhat.fsw.services.BusinessProcessService"/>
+      </sca:service>
+    </sca:component>
+    <sca:service name="BusinessProcessServicePortType" promote="ProcessComponent/BusinessProcessService">
+      <sca:interface.wsdl interface="BusinessProcessService.wsdl#wsdl.porttype(BusinessProcessServicePortType)"/>
+      <soap:binding.soap>
+        <soap:wsdl>BusinessProcessService.wsdl</soap:wsdl>
+        <soap:contextPath>services</soap:contextPath>
+      </soap:binding.soap>
+    </sca:service>
+  </sca:composite>
+  <transforms>
+    <xform:transform.jaxb from="{urn:fsw-poc-service:1.0}order" to="java:it.redhat.fsw.domain.Order" contextPath="it.redhat.fsw.domain"/>
+  </transforms>
+  <validates>
+    <validate:validate.xml name="{urn:fsw-poc-service:1.0}order" schemaType="XML_SCHEMA" namespaceAware="true">
+      <validate:schemaFiles>
+        <validate:entry file="BusinessProcessService_schema1.xsd"/>
+      </validate:schemaFiles>
+    </validate:validate.xml>
+  </validates>
+</switchyard>

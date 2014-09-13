@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:tns="urn:fsw-poc-service:1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	targetNamespace="urn:fsw-poc-service:1.0" version="1.0">
+	<xs:element name="line" type="tns:orderLine" />
+	<xs:element name="order" type="tns:order" />
+	<xs:element name="total" type="tns:orderTotal" />
+	<xs:complexType name="order">
+		<xs:sequence>
+			<xs:element minOccurs="0" name="orderId" type="xs:string" />
+			<xs:element minOccurs="0" name="customerName" type="xs:string" />
+			<xs:element minOccurs="0" name="customerVAT" type="xs:string" />
+			<xs:element maxOccurs="unbounded" minOccurs="0" name="lines"
+				type="tns:orderLine" />
+			<xs:element maxOccurs="unbounded" minOccurs="0" name="totals"
+				type="tns:orderTotal" />
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="orderPrice">
+		<xs:simpleContent>
+			<xs:extension base="xs:long">
+				<xs:attribute name="currency" type="tns:currencyType" />
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<xs:complexType name="orderLine">
+		<xs:sequence>
+			<xs:element minOccurs="0" name="lineID" type="xs:long" />
+			<xs:element minOccurs="0" name="product" type="xs:string" />
+			<xs:element minOccurs="0" name="quantity" type="xs:long" />
+			<xs:element minOccurs="0" name="price" type="tns:orderPrice" />
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="orderTotal">
+		<xs:sequence>
+			<xs:element minOccurs="0" name="totalAmount" type="tns:orderPrice" />
+		</xs:sequence>
+	</xs:complexType>
+	<xs:simpleType name="currencyType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="EUR" />
+			<xs:enumeration value="USD" />
+		</xs:restriction>
+	</xs:simpleType>
+</xs:schema>
