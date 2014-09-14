@@ -1,0 +1,21 @@
+package it.redhat.fsw.rules
+
+import it.redhat.fsw.domain.*
+
+global java.util.Map globals
+
+rule "Correct order"
+    when
+        $o : Order(lines.size() > 0)
+    then
+        globals.put("Result", Boolean.TRUE);
+end
+        
+rule "Order with no lines"
+    when
+        $o : Order(lines==null || lines.size() == 0)
+    then
+        globals.put("Result", Boolean.FALSE);
+        System.out.println("Cannot insert an order with zero lines.");
+end
+        

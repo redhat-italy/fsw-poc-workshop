@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <xs:schema xmlns:tns="urn:fsw-poc-service:1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema"
 	targetNamespace="urn:fsw-poc-service:1.0" version="1.0">
+	<xs:element name="orderResponse" type="tns:orderResponse" />
 	<xs:element name="line" type="tns:orderLine" />
 	<xs:element name="order" type="tns:order" />
 	<xs:element name="total" type="tns:orderTotal" />
@@ -41,4 +42,9 @@
 			<xs:enumeration value="USD" />
 		</xs:restriction>
 	</xs:simpleType>
+	<xs:complexType name="orderResponse">
+		<xs:sequence>
+			<xs:element name="response" type="xs:boolean" minOccurs="1" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
 </xs:schema>

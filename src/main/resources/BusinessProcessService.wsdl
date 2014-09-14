@@ -4,10 +4,13 @@
 <schema xmlns="http://www.w3.org/2001/XMLSchema">
   <import namespace="urn:fsw-poc-service:1.0" schemaLocation="BusinessProcessService_schema1.xsd"/>
 </schema>
-  </wsdl:types>
+    </wsdl:types>
   <wsdl:message name="submitOrder">
-    <wsdl:part name="arg0" element="tns:order">
+    <wsdl:part name="request" element="tns:order">
     </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="submitOrderResponse">
+  	<wsdl:part name="response" element="tns:orderResponse"></wsdl:part>
   </wsdl:message>
   <wsdl:portType name="BusinessProcessServicePortType">
     <wsdl:operation name="submitOrder">

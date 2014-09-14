@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<switchyard xmlns="urn:switchyard-config:switchyard:1.0" xmlns:bean="urn:switchyard-component-bean:config:1.0" xmlns:bpm="urn:switchyard-component-bpm:config:1.0" xmlns:sca="http://docs.oasis-open.org/ns/opencsa/sca/200912" xmlns:soap="urn:switchyard-component-soap:config:1.0" xmlns:validate="urn:switchyard-config:validate:1.0" xmlns:xform="urn:switchyard-config:transform:1.0" name="FSWPoc" targetNamespace="urn:fsw-poc-service:1.0">
+<switchyard xmlns="urn:switchyard-config:switchyard:1.0" xmlns:bean="urn:switchyard-component-bean:config:1.0" xmlns:bpm="urn:switchyard-component-bpm:config:1.0" xmlns:jpa="urn:switchyard-component-camel-jpa:config:1.0" xmlns:mail="urn:switchyard-component-camel-mail:config:1.0" xmlns:rules="urn:switchyard-component-rules:config:1.0" xmlns:sca="http://docs.oasis-open.org/ns/opencsa/sca/200912" xmlns:soap="urn:switchyard-component-soap:config:1.0" xmlns:validate="urn:switchyard-config:validate:1.0" xmlns:xform="urn:switchyard-config:transform:1.0" name="FSWPoc" targetNamespace="urn:fsw-poc-service:1.0">
   <sca:composite name="FSWPoc" targetNamespace="urn:fsw-poc-service:1.0">
     <sca:component name="ProcessComponent">
       <bpm:implementation.bpm persistent="false" processId="BusinessProcessService">
@@ -9,12 +9,21 @@
           </bpm:resources>
         </bpm:manifest>
         <bpm:operations>
-          <bpm:operation type="START_PROCESS"/>
+          <bpm:operation name="submitOrder" type="START_PROCESS"/>
         </bpm:operations>
       </bpm:implementation.bpm>
       <sca:service name="BusinessProcessService">
         <sca:interface.java interface="it.redhat.fsw.services.BusinessProcessService"/>
       </sca:service>
+      <sca:reference name="ValidationRule">
+        <sca:interface.java interface="it.redhat.fsw.rules.ValidationRule"/>
+      </sca:reference>
+      <sca:reference name="JPAService">
+        <sca:interface.java interface="it.redhat.fsw.services.JPAService"/>
+      </sca:reference>
+      <sca:reference name="MailService">
+        <sca:interface.java interface="it.redhat.fsw.services.MailService"/>
+      </sca:reference>
     </sca:component>
     <sca:service name="BusinessProcessServicePortType" promote="ProcessComponent/BusinessProcessService">
       <sca:interface.wsdl interface="BusinessProcessService.wsdl#wsdl.porttype(BusinessProcessServicePortType)"/>
@@ -23,6 +32,47 @@
         <soap:contextPath>services</soap:contextPath>
       </soap:binding.soap>
     </sca:service>
+    <sca:component name="RulesComponent">
+      <rules:implementation.rules>
+        <rules:manifest>
+          <rules:resources>
+            <rules:resource location="RulesComponent.drl" type="DRL"/>
+          </rules:resources>
+        </rules:manifest>
+        <rules:operations>
+          <rules:operation name="validate" type="EXECUTE">
+            <rules:outputs/>
+          </rules:operation>
+        </rules:operations>
+      </rules:implementation.rules>
+      <sca:service name="ValidationRule">
+        <sca:interface.java interface="it.redhat.fsw.rules.ValidationRule"/>
+      </sca:service>
+    </sca:component>
+    <sca:reference name="JPAService" multiplicity="0..1" promote="ProcessComponent/JPAService">
+      <sca:interface.java interface="it.redhat.fsw.services.JPAService"/>
+      <jpa:binding.jpa>
+        <jpa:entityClassName>it.redhat.fsw.persistence.OrderDTO</jpa:entityClassName>
+        <jpa:persistenceUnit>persistenceUnit</jpa:persistenceUnit>
+        <jpa:transactionManager>#jtaTransactionManager</jpa:transactionManager>
+        <jpa:produce>
+          <jpa:usePersist>true</jpa:usePersist>
+        </jpa:produce>
+      </jpa:binding.jpa>
+    </sca:reference>
+    <sca:reference name="MailService" multiplicity="0..1" promote="ProcessComponent/MailService">
+      <sca:interface.java interface="it.redhat.fsw.services.MailService"/>
+      <mail:binding.mail>
+        <mail:host>localhost</mail:host>
+        <mail:username>test</mail:username>
+        <mail:password>test</mail:password>
+        <mail:produce>
+          <mail:subject>Order error insert</mail:subject>
+          <mail:from>order@localhost</mail:from>
+          <mail:to>support@localhost</mail:to>
+        </mail:produce>
+      </mail:binding.mail>
+    </sca:reference>
   </sca:composite>
   <transforms>
     <xform:transform.jaxb from="{urn:fsw-poc-service:1.0}order" to="java:it.redhat.fsw.domain.Order" contextPath="it.redhat.fsw.domain"/>
