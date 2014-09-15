@@ -5,5 +5,5 @@ import it.redhat.fsw.domain.OrderResponse;
 
 public interface BusinessProcessService {
 
-	void submitOrder(Order order);
+	OrderResponse submitOrder(Order order);
 }

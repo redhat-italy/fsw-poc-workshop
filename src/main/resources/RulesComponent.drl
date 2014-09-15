@@ -8,14 +8,13 @@ rule "Correct order"
     when
         $o : Order(lines.size() > 0)
     then
-        globals.put("Result", Boolean.TRUE);
+        globals.put("Result", new OrderResponse(true));
 end
         
 rule "Order with no lines"
     when
         $o : Order(lines==null || lines.size() == 0)
     then
-        globals.put("Result", Boolean.FALSE);
-        System.out.println("Cannot insert an order with zero lines.");
+        globals.put("Result", new OrderResponse("Cannot insert an order with zero lines."));
 end
         

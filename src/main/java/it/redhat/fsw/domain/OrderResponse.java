@@ -10,6 +10,7 @@ package it.redhat.fsw.domain;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 
@@ -32,15 +33,30 @@ import javax.xml.bind.annotation.XmlType;
  * 
  * 
  */
+@XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "orderResponse", propOrder = {
-    "response"
+	    "response",
+	    "status"
 })
 public class OrderResponse {
 
     protected boolean response;
+    protected String status;
 
-    /**
+    public OrderResponse() {
+	}
+    
+    public OrderResponse(boolean response) {
+		this.response = response;
+	}
+
+    public OrderResponse(String status) {
+		this.response = false;
+		this.status = status;
+	}
+
+	/**
      * Gets the value of the response property.
      * 
      */
@@ -56,4 +72,12 @@ public class OrderResponse {
         this.response = value;
     }
 
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
+    
 }

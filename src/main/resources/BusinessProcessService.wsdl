@@ -4,6 +4,14 @@
 <schema xmlns="http://www.w3.org/2001/XMLSchema">
   <import namespace="urn:fsw-poc-service:1.0" schemaLocation="BusinessProcessService_schema1.xsd"/>
 </schema>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="urn:fsw-poc-service:1.0">
+        	<xsd:element name="submitOrderResponse">
+        		<xsd:complexType>
+        			<xsd:sequence>
+        				<xsd:element name="out" type="xsd:string"></xsd:element>
+        			</xsd:sequence>
+        		</xsd:complexType>
+        	</xsd:element></xsd:schema>
     </wsdl:types>
   <wsdl:message name="submitOrder">
     <wsdl:part name="request" element="tns:order">
@@ -12,10 +20,14 @@
   <wsdl:message name="submitOrderResponse">
   	<wsdl:part name="response" element="tns:orderResponse"></wsdl:part>
   </wsdl:message>
+  <wsdl:message name="submitOrderResponse1">
+  	<wsdl:part name="response" element="tns:orderResponse"></wsdl:part>
+  </wsdl:message>
   <wsdl:portType name="BusinessProcessServicePortType">
     <wsdl:operation name="submitOrder">
       <wsdl:input name="submitOrder" message="tns:submitOrder">
     </wsdl:input>
+      <wsdl:output message="tns:submitOrderResponse1"></wsdl:output>
     </wsdl:operation>
   </wsdl:portType>
   <wsdl:binding name="BusinessProcessServiceSoapBinding" type="tns:BusinessProcessServicePortType">
